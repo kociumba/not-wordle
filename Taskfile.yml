@@ -1,0 +1,32 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+    build:
+        cmds:
+            - go build -o ./build
+    build:release:windows:
+        env:
+            CGO_ENABLED: "0"
+            GOOS: "windows"
+        cmds:
+            - go build -o ./build -ldflags "-s -w"
+            - upx --best ./build/not-wordle.exe
+
+    build:release:linux:
+        env:
+            CGO_ENABLED: "0"
+            GOOS: "linux"
+        cmds:
+            - go build -o ./build -ldflags "-s -w"
+            - upx --best ./build/not-wordle
+
+    build:release:
+        cmds:
+          - task build:release:{{OS}}
+
+    run:
+        cmds:
+        - go build -o ./tmp/main.exe .
+        - ./tmp/main.exe
